@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fileCache = {};
 
-    // === 1. ИНИЦИАЛИЗАЦИЯ САЙДБАРА ===
     function initSidebar() {
         sidebarNav.innerHTML = '';
         projects.forEach(project => {
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === 2. СТАРТОВАЯ СТРАНИЦА ===
     function loadHomePage() {
         breadcrumbs.innerHTML = '';
         logoDocs.style.display = 'none';
@@ -63,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         contentArea.style.padding = '0';
 
-        // Генерируем HTML стартовой страницы с onclick="openProjectReadme('id')"
         let cardsHtml = '';
         projects.forEach(p => {
             cardsHtml += `
@@ -87,12 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Новая функция для открытия README по клику на карточку
     window.openProjectReadme = async function(projectId) {
         const project = projects.find(p => p.id === projectId);
         if (!project) return;
 
-        // 1. Раскрываем дерево проекта в сайдбаре (визуально)
         const fileContainer = document.getElementById(`files-${projectId}`);
         if (!fileContainer.classList.contains('open')) {
             document.querySelectorAll('.project-title').forEach(el => el.classList.remove('open'));
@@ -102,39 +97,31 @@ document.addEventListener('DOMContentLoaded', () => {
             title.classList.add('open');
             fileContainer.classList.add('open');
             
-            // Загружаем список файлов, если еще не загружен
             await loadProjectFiles(project, fileContainer); 
         }
 
-        // 2. Ищем файл README.md в этом контейнере
         let readmeLink = null;
-        // Ждем немного, чтобы DOM успел обновиться после loadProjectFiles
         setTimeout(() => {
             const links = fileContainer.querySelectorAll('.nav-item');
             links.forEach(link => {
-                // Ищем ссылку, которая называется "README" (в разных регистрах)
                 if (link.textContent.trim().toLowerCase() === 'readme') {
                     readmeLink = link;
                 }
             });
 
             if (readmeLink) {
-                // Имитируем клик по README в сайдбаре
                 readmeLink.click();
             } else {
-                // Если README нет, просто открываем первый попавшийся файл
                 if (links.length > 0) links[0].click();
             }
-        }, 100); // Небольшая задержка для подгрузки
+        }, 100);
     };
 
-    // Клик по логотипу -> На главную
     homeLink.addEventListener('click', (e) => {
         e.preventDefault();
         loadHomePage();
     });
 
-    // === 3. ЗАГРУЗКА ФАЙЛОВ ПРОЕКТА ===
     async function loadProjectFiles(project, container) {
         if (fileCache[project.id]) return;
         container.innerHTML = '<div class="loading-text" style="text-align:left; margin: 5px 0;">Loading...</div>';
@@ -163,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.stopPropagation();
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                     link.classList.add('active');
-                    // Возвращаем отступы для контента при чтении
                     contentArea.style.padding = ''; 
                     loadMarkdown(file.download_url, project.name, displayName, project.repo);
                 });
@@ -175,12 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // === 4. ЗАГРУЗКА И РЕНДЕРИНГ MARKDOWN ===
     async function loadMarkdown(url, projectName, fileName, repoName) {
         contentArea.innerHTML = '<div class="loading-text">Loading content...</div>';
         tocList.innerHTML = '';
         
-        // Показываем "/ Docs" в логотипе
         logoDocs.style.display = 'inline';
         
         try {
@@ -249,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчики для шапки
     navMist.addEventListener('click', (e) => { e.preventDefault(); autoOpenProject('mist'); });
     navMinit.addEventListener('click', (e) => { e.preventDefault(); autoOpenProject('minit'); });
     navMistic.addEventListener('click', (e) => { e.preventDefault(); autoOpenProject('mistic'); });
@@ -261,7 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Запускаем сайт с главной страницы
     initSidebar();
     loadHomePage();
 });

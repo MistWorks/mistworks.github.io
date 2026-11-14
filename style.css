@@ -14,7 +14,6 @@ body {
 a { color: #58a6ff; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* === ШАПКА === */
 .topbar {
     height: 60px; background-color: #161b22; border-bottom: 1px solid #30363d;
     display: flex; justify-content: space-between; align-items: center;
@@ -23,14 +22,12 @@ a:hover { text-decoration: underline; }
 
 .header-left { display: flex; align-items: center; gap: 30px; }
 
-/* Логотип-ссылка */
 .logo-link { display: flex; align-items: baseline; text-decoration: none; }
 .logo-link:hover { text-decoration: none; }
 .logo { font-weight: 600; font-size: 1.2rem; color: #f0f6fc; transition: color 0.2s; }
 .logo-link:hover .logo { color: #58a6ff; }
 .logo-docs { color: #8b949e; font-size: 0.9rem; font-weight: 400; }
 
-/* Навигация в шапке */
 .header-nav { display: flex; gap: 20px; }
 .header-nav a {
     color: #8b949e; font-size: 0.95rem; font-weight: 500;
@@ -45,10 +42,8 @@ a:hover { text-decoration: underline; }
 .github-link { font-size: 0.9rem; color: #8b949e; }
 .github-link:hover { color: #c9d1d9; }
 
-/* === МАКЕТ === */
 .layout { display: flex; flex: 1; width: 100%; max-width: 1600px; margin: 0 auto; }
 
-/* === ЛЕВЫЙ САЙДБАР === */
 .sidebar-left {
     width: 280px; padding: 20px 10px 20px 24px;
     border-right: 1px solid #30363d; flex-shrink: 0;
@@ -86,14 +81,12 @@ a:hover { text-decoration: underline; }
 
 .loading-text { color: #8b949e; font-size: 0.9rem; margin-top: 20px; text-align: center; }
 
-/* === ЦЕНТРАЛЬНЫЙ КОНТЕНТ === */
 .content { flex-grow: 1; padding: 40px 40px; height: calc(100vh - 60px - 60px); overflow-y: auto; }
 .content::-webkit-scrollbar { width: 8px; }
 .content::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 
 .content-inner { max-width: 800px; margin: 0 auto; }
 
-/* Стартовая страница (карточки проектов) */
 .home-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -115,7 +108,6 @@ a:hover { text-decoration: underline; }
 .home-card h3 { color: #f0f6fc; margin-bottom: 8px; font-size: 1.2rem; }
 .home-card p { color: #8b949e; font-size: 0.9rem; margin: 0; }
 
-/* Стили для Markdown */
 .content-inner h1 { font-size: 2rem; font-weight: 600; color: #f0f6fc; margin-bottom: 16px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
 .content-inner h2 { font-size: 1.5rem; font-weight: 600; color: #f0f6fc; margin-top: 32px; margin-bottom: 16px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
 .content-inner h3 { font-size: 1.25rem; font-weight: 600; color: #f0f6fc; margin-top: 24px; margin-bottom: 16px; }
@@ -131,7 +123,6 @@ a:hover { text-decoration: underline; }
 .content-inner th, .content-inner td { padding: 6px 13px; border: 1px solid #30363d; }
 .content-inner th { font-weight: 600; background-color: #161b22; }
 
-/* === ПРАВЫЙ САЙДБАР === */
 .sidebar-right {
     width: 240px; padding: 40px 24px 40px 10px;
     flex-shrink: 0; position: sticky; top: 60px; height: calc(100vh - 60px - 60px);
@@ -155,7 +146,6 @@ a:hover { text-decoration: underline; }
 .toc-list a:hover { color: #f0f6fc; text-decoration: none; }
 .toc-list a.active { color: #58a6ff; border-left-color: #58a6ff; }
 
-/* === ФУТЕР === */
 .site-footer {
     height: 60px; background-color: #161b22; border-top: 1px solid #30363d;
     display: flex; align-items: center; padding: 0 24px;
