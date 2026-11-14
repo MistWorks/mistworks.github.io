@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MistWorks Docs</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header class="topbar">
+        <div class="header-left">
+            <!-- Обернули логотип в ссылку -->
+            <a href="#" id="home-link" class="logo-link">
+                <span class="logo">MistWorks</span>
+                <span class="logo-docs" id="logo-docs" style="display: none;"> / Docs</span>
+            </a>
+            
+            <nav class="header-nav">
+                <a href="#" id="nav-mist">Mist</a>
+                <a href="#" id="nav-minit">Minit</a>
+                <a href="#" id="nav-mistic">Mistic</a>
+            </nav>
+        </div>
+        
+        <div class="header-right">
+            <div class="breadcrumbs" id="breadcrumbs"></div>
+            <a href="https://github.com/MistWorks" target="_blank" class="github-link">GitHub</a>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar-left">
+            <nav id="sidebar-nav">
+                <div class="loading-text">Loading projects...</div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <div id="content-area" class="content-inner">
+                <!-- Начальная страница (Заполняется при загрузке) -->
+            </div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="toc-container">
+                <div class="toc-title">On this page</div>
+                <ul id="toc-list" class="toc-list"></ul>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-left" id="footer-project-link">
+                <span>MistWorks</span>
+            </div>
+            <div class="footer-right">
+                <span>License: MIT</span>
+                <span>© 2026 ImDevyz / MistWorks</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
