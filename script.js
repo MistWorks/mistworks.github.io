@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (links.length > 0) links[0].click();
             }
-        }, 100);
+        }, 300);
     };
 
     homeLink.addEventListener('click', (e) => {
@@ -124,50 +124,141 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadProjectFiles(project, container) {
         if (fileCache[project.id]) return;
-        container.innerHTML = '<div class="loading-text" style="text-align:left; margin: 5px 0;">Loading...</div>';
+        container.innerHTML = '<div class="loading-text" style="text-align:left; margin: 5px 0;">Loading tree...</div>';
 
         try {
-            const url = `https://api.github.com/repos/${project.repo}/contents/${project.path}?ref=${project.branch}`;
+            const url = `https://api.github.com/repos/${project.repo}/git/trees/${project.branch}?recursive=1`;
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed');
+            if (!response.ok) throw new Error('Failed to fetch tree');
             const data = await response.json();
             
-            const mdFiles = data.filter(file => file.type === 'file' && file.name.endsWith('.md'));
-            container.innerHTML = '';
+            const basePath = project.path ? project.path + '/' : '';
+            const mdFiles = data.tree.filter(item => 
+                item.type === 'blob' && 
+                item.path.startsWith(basePath) && 
+                item.path.endsWith('.md')
+            );
 
             if (mdFiles.length === 0) {
                 container.innerHTML = '<div class="loading-text" style="text-align:left; margin: 5px 0;">No files.</div>';
                 return;
             }
 
-            mdFiles.forEach(file => {
-                const link = document.createElement('div');
-                link.className = 'nav-item';
-                const displayName = file.name.replace('.md', '').replace(/-/g, ' ');
-                link.textContent = displayName;
-                
-                link.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    link.classList.add('active');
-                    contentArea.style.padding = ''; 
-                    loadMarkdown(file.download_url, project.name, displayName, project.repo);
-                });
-                container.appendChild(link);
-            });
+            container.innerHTML = '';
+            buildTree(mdFiles, container, project);
+
             fileCache[project.id] = true;
         } catch (error) {
-            container.innerHTML = '<div class="loading-text" style="color:#ff7b72; text-align:left;">Error.</div>';
+            console.error(error);
+            container.innerHTML = '<div class="loading-text" style="color:#ff7b72; text-align:left;">Error loading files.</div>';
         }
+    }
+
+    function buildTree(files, container, project) {
+        const tree = {};
+        
+        files.forEach(file => {
+            let relativePath = file.path;
+            if (project.path && relativePath.startsWith(project.path + '/')) {
+                relativePath = relativePath.substring(project.path.length + 1);
+            }
+            
+            const parts = relativePath.split('/');
+            let current = tree;
+            
+            parts.forEach((part, index) => {
+                if (index === parts.length - 1) {
+                    current[part] = { type: 'file', data: file };
+                } else {
+                    if (!current[part]) current[part] = { type: 'folder', children: {} };
+                    current = current[part].children;
+                }
+            });
+        });
+
+        function renderTree(node, parentElement) {
+            const keys = Object.keys(node).sort((a, b) => {
+                const isFolderA = node[a].type === 'folder';
+                const isFolderB = node[b].type === 'folder';
+                if (isFolderA && !isFolderB) return -1;
+                if (!isFolderA && isFolderB) return 1;
+                return a.localeCompare(b);
+            });
+
+            keys.forEach(key => {
+                const item = node[key];
+                
+                if (item.type === 'folder') {
+                    const folderTitle = document.createElement('div');
+                    folderTitle.className = 'folder-title';
+                    folderTitle.innerHTML = `<span class="icon">▶</span> ${key}`;
+                    
+                    const folderContent = document.createElement('div');
+                    folderContent.className = 'folder-content';
+
+                    folderTitle.addEventListener('click', () => {
+                        folderTitle.classList.toggle('open');
+                        folderContent.classList.toggle('open');
+                    });
+
+                    parentElement.appendChild(folderTitle);
+                    parentElement.appendChild(folderContent);
+                    
+                    renderTree(item.children, folderContent);
+                } else {
+                    const link = document.createElement('div');
+                    link.className = 'nav-item';
+                    const displayName = key.replace('.md', '').replace(/-/g, ' ');
+                    link.textContent = displayName;
+                    
+                    link.dataset.path = item.data.path; 
+                    
+                    link.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                        link.classList.add('active');
+                        contentArea.style.padding = '';
+                        
+                        const rawUrl = `https://raw.githubusercontent.com/${project.repo}/${project.branch}/${item.data.path}`;
+                        loadMarkdown(rawUrl, project.name, displayName, project.repo);
+                    });
+                    
+                    parentElement.appendChild(link);
+                }
+            });
+        }
+
+        renderTree(tree, container);
     }
 
     async function loadMarkdown(url, projectName, fileName, repoName) {
         contentArea.innerHTML = '<div class="loading-text">Loading content...</div>';
         tocList.innerHTML = '';
-        
         logoDocs.style.display = 'inline';
         
         try {
+            const relativePath = url.split('raw.githubusercontent.com/')[1].split('/').slice(2).join('/');
+            const treeLinks = document.querySelectorAll('.nav-item');
+            let found = false;
+            
+            treeLinks.forEach(link => {
+                if (link.dataset.path && relativePath.includes(link.dataset.path)) {
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    link.classList.add('active');
+                    found = true;
+                    
+                    let parent = link.parentElement;
+                    while (parent && parent.classList.contains('folder-content')) {
+                        parent.classList.add('open');
+                        const folderTitle = parent.previousElementSibling;
+                        if (folderTitle && folderTitle.classList.contains('folder-title')) {
+                            folderTitle.classList.add('open');
+                        }
+                        parent = parent.parentElement;
+                    }
+                }
+            });
+
             const response = await fetch(url);
             if (!response.ok) throw new Error('Failed');
             const markdownText = await response.text();

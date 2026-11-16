@@ -158,3 +158,24 @@ a:hover { text-decoration: underline; }
 .footer-left a { color: #8b949e; }
 .footer-left a:hover { color: #f0f6fc; text-decoration: none; }
 .footer-right { display: flex; gap: 20px; }
+
+.folder-title {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    color: #c9d1d9;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    user-select: none;
+}
+.folder-title:hover { background-color: #161b22; }
+.folder-title .icon { margin-right: 8px; font-size: 0.8rem; color: #8b949e; }
+.folder-content {
+    display: none;
+    border-left: 1px solid #30363d;
+    margin-left: 15px;
+    padding-left: 10px;
+}
+.folder-content.open { display: block; }
+.folder-title.open .icon { transform: rotate(90deg); }
